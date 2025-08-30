@@ -254,7 +254,7 @@ def micro_arch(cpu):
    if (vi.displ_family, vi.displ_model) in [(0x06, 0x6A), (0x06, 0x6C)]:
       return 'ICX'
    if (vi.displ_family, vi.displ_model) in [(0x06, 0x96), (0x06, 0x9C)]:
-      return 'TRM'
+      return 'TNT'
    if (vi.displ_family, vi.displ_model) in [(0x06, 0x97), (0x06, 0x9A)]:
       return 'ADL-' + ('P' if (vi.core_type == 0x40) else 'E')
    if (vi.displ_family, vi.displ_model) in [(0x06, 0xAA), (0x06, 0xAB), (0x06, 0xAC)]:
