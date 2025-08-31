@@ -36,6 +36,7 @@ debugOutput = False
 supportsAVX = False
 instrNodeList = [] # list of all XML instruction nodes that are not filtered out
 instrNodeDict = {} # dict from instrNode.attrib['string'] to instrNode
+eventDict = {} # dict from emon definition file for text-based event mapping
 
 #R15: loop counter
 #R14: reserved for memory addresses (base)
@@ -268,9 +269,104 @@ def getCodeLength(asmCode):
    objcopy(objFile, binFile)
    return os.path.getsize(binFile)
 
+def findEventConfig():
+   config_file = None
+   if arch in ['ADL-E']:
+      return '../../cfg_AlderLakeE_all.txt'
+   if arch in ['ADL-P']:
+      return '../../cfg_AlderLakeP_all.txt'
+   if arch in ['ARL-E', 'LNL-E']:
+      config_file = 'ArrowLakeE_Skymont'
+   if arch in ['ARL-P', 'LNL-P']:
+      config_file = 'ArrowLakeP_LionCove'
+   if arch in ['BNL']:
+      return 'cfg_Bonnell_all.txt'
+   if arch in ['BDW', 'BDX']:
+      config_file = 'Broadwell'
+   if arch in ['Core']:
+      return 'cfg_Core_all.txt'
+   if arch in ['CNL', 'CLX']:
+      config_file = 'CascadeLakeX'
+   if arch in ['CWF']:
+      config_file = 'ClearwaterForest'
+   if arch in ['EMR', 'SPR']:
+      config_file = 'EmeraldRapids'
+   if arch in ['GLM']:
+      config_file = 'Goldmont'
+   if arch in ['GLP']:
+      config_file = 'GoldmontPlus'
+   if arch in ['HSW']:
+      config_file = 'Haswell'
+   if arch in ['ICL', 'ICX']:
+      config_file = 'IceLake'
+   if arch in ['IVB', 'IVT']:
+      config_file = 'IvyBridge'
+   if arch in ['KNL']:
+      config_file = 'KnightsLanding'
+   if arch in ['MTL-E']:
+      config_file = 'MeteorLakeE_Crestmont'
+   if arch in ['MTL-P']:
+      config_file = 'MeteorLakeP_RedwoodCove'
+   if arch in ['NHM']:
+      config_file = 'Nehalem'
+   if arch in ['PTL-E']:
+      config_file = 'PantherLakeE_Darkmont'
+   if arch in ['PTL-P']:
+      config_file = 'PantherLakeP_CougarCove'
+   if arch in ['SNB', 'JKT']:
+      config_file = 'SandyBridge'
+   if arch in ['SLM']:
+      config_file = 'Silvermont'
+   if arch in ['SKL', 'KBL', 'CFL']:
+      config_file = 'Skylake'
+   if arch in ['SKX', 'CLX']:
+      config_file = 'SkylakeX'
+   if arch in ['SRF']:
+      config_file = 'SierraForest'
+   if arch in ['TGL']:
+      config_file = 'TigerLake'
+   if arch in ['TNT']:
+      config_file = 'Tremont'
+   if arch in ['WSM']:
+      config_file = 'Westmere'
+   if config_file is None:
+      return config_file
+   return '../../configs/cfg_' + config_file + '_all_core.txt'
+
+def readEventConfig(config_file):
+   if config_file is None:
+      config_file = findEventConfig()
+   if config_file is None:
+      return
+   try:
+      prog = re.compile(r"^\S+\s+\S+$")
+      with open(config_file, 'r') as file:
+         #print(f"Reading event configuration file {config_file}")
+         for line in file:
+            text = line.strip()
+            if not text:
+               continue
+            if not prog.match(text):
+               continue
+            results = re.split(r"\s+", text, maxsplit=1)
+            if len(results) == 2:
+               key = results[1]
+               value = results[0]
+               eventDict[key] = value
+   except FileNotFoundError:
+        print(f"Error: File not found at {config_file}")
+   except Exception as e:
+        print(f"An error occurred: {e} for ({text})")
 
 def getEventConfig(event):
+   if event in eventDict:
+      return eventDict[event]
    if event == 'UOPS':
+      if 'UOPS_EXECUTED.THREAD' in eventDict: return eventDict['UOPS_EXECUTED.THREAD']
+      if 'UOPS_RETIRED.ALL' in eventDict: return eventDict['UOPS_RETIRED.ALL']
+      if 'UOPS_RETIRED.ANY' in eventDict: return eventDict['UOPS_RETIRED.ANY']
+      if 'TOPDOWN_RETIRING.ALL' in eventDict: return eventDict['TOPDOWN_RETIRING.ALL']
+      if 'TOPDOWN_RETIRING.ALL_P' in eventDict: return eventDict['TOPDOWN_RETIRING.ALL_P']
       if arch in ['CON', 'WOL']: return 'A0.00' # RS_UOPS_DISPATCHED
       if arch in ['NHM', 'WSM', 'SNB' ]: return 'C2.01' # UOPS_RETIRED.ANY
       if arch in ['SNB']: return 'C2.01' # UOPS_RETIRED.ALL
@@ -281,28 +377,38 @@ def getEventConfig(event):
       if arch in ['IVB', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL', 'ADL-P', 'EMR', 'MTL-P']: return 'B1.01' # UOPS_EXECUTED.THREAD
       if arch in ['ZEN+', 'ZEN2', 'ZEN3', 'ZEN4', 'ZEN5']: return '0C1.00'
    if event == 'RETIRE_SLOTS':
+      if 'UOPS_RETIRED.SLOTS' in eventDict: return eventDict['UOPS_RETIRED.SLOTS']
       if arch in ['NHM', 'WSM', 'SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL', 'ADL-P', 'EMR', 'MTL-P']: return 'C2.02'
    if event == 'UOPS_MITE':
+      if 'IDQ.MITE_UOPS' in eventDict: return eventDict['IDQ.MITE_UOPS']
       if arch in ['SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL', 'ADL-P', 'EMR', 'MTL-P']: return '79.04'
    if event == 'UOPS_MITE>=1':
+      if 'IDQ.MITE_CYCLES_ANY' in eventDict: return eventDict['IDQ.MITE_CYCLES_ANY']
       if arch in ['SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL', 'ADL-P', 'EMR', 'MTL-P']: return '79.04.CMSK=1'
    if event == 'UOPS_MS':
+      if 'UOPS_RETIRED.MS' in eventDict: return eventDict['UOPS_RETIRED.MS']
       if arch in ['NHM', 'WSM']: return 'D1.02'
       if arch in ['SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL']: return '79.30'
       if arch in ['ADL-P', 'EMR', 'MTL-P']: return '79.20'
       if arch in ['SLM', 'AMT', 'GLM', 'GLP', 'TNT', 'ADL-E', 'MTL-E']: return 'C2.01'
       if arch in ['BNL']: return 'A9.01' # undocumented, but seems to work
    if event == 'UOPS_PORT_0':
+      if 'UOPS_DISPATCHED.ALU' in eventDict: return eventDict['UOPS_DISPATCHED.ALU']
+      if 'INT_UOPS_EXECUTED.PRIMARY' in eventDict: return eventDict['INT_UOPS_EXECUTED.PRIMARY']
       if arch in ['CON', 'WOL']: return 'A1.01.CTR=0'
       if arch in ['NHM', 'WSM']: return 'B1.01'
       if arch in ['SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL']: return 'A1.01'
       if arch in ['ADL-P', 'EMR', 'MTL-P']: return 'B2.01'
    if event == 'UOPS_PORT_1':
+      if 'UOPS_DISPATCHED.SLOW' in eventDict: return eventDict['UOPS_DISPATCHED.SLOW']
+      if 'INT_UOPS_EXECUTED.2ND' in eventDict: return eventDict['INT_UOPS_EXECUTED.2ND']
       if arch in ['CON', 'WOL']: return 'A1.02.CTR=0'
       if arch in ['NHM', 'WSM']: return 'B1.02'
       if arch in ['SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL']: return 'A1.02'
       if arch in ['ADL-P', 'EMR', 'MTL-P']: return 'B2.02'
    if event == 'UOPS_PORT_2':
+      if 'UOPS_DISPATCHED.LOAD' in eventDict: return eventDict['UOPS_DISPATCHED.LOAD']
+      if 'INT_UOPS_EXECUTED.LD' in eventDict: return eventDict['INT_UOPS_EXECUTED.LD']
       if arch in ['CON', 'WOL']: return 'A1.04.CTR=0'
       if arch in ['NHM', 'WSM']: return 'B1.04'
       if arch in ['SNB', 'IVB']: return 'A1.0C'
@@ -312,21 +418,34 @@ def getEventConfig(event):
       if arch in ['NHM', 'WSM']: return 'B1.08'
       if arch in ['SNB', 'IVB']: return 'A1.30'
       if arch in ['HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'CLX']: return 'A1.08'
+      if 'UOPS_DISPATCHED.STA' in eventDict: return eventDict['UOPS_DISPATCHED.STA']
+      if 'INT_UOPS_EXECUTED.STA' in eventDict: return eventDict['INT_UOPS_EXECUTED.STA']
    if event == 'UOPS_PORT_4':
+      if 'UOPS_DISPATCHED.JMP' in eventDict: return eventDict['UOPS_DISPATCHED.JMP']
+      if 'INT_UOPS_EXECUTED.STD_JMP' in eventDict: return eventDict['INT_UOPS_EXECUTED.STD_JMP']
       if arch in ['CON', 'WOL']: return 'A1.10.CTR=0'
       if arch in ['NHM', 'WSM']: return 'B1.10'
       if arch in ['SNB', 'IVB']: return 'A1.40'
       if arch in ['HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'CLX']: return 'A1.10'
    if event == 'UOPS_PORT_5':
+      if 'UOPS_DISPATCHED.STD' in eventDict: return eventDict['UOPS_DISPATCHED.STD']
       if arch in ['CON', 'WOL']: return 'A1.20.CTR=0'
       if arch in ['NHM', 'WSM']: return 'B1.20'
       if arch in ['SNB', 'IVB']: return 'A1.80'
       if arch in ['HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL']: return 'A1.20'
    if event == 'UOPS_PORT_6':
+      if 'FP_ARITH_DISPATCHED.V0' in eventDict: return eventDict['FP_ARITH_DISPATCHED.V0']
+      if 'FP_VINT_UOPS_EXECUTED.PRIMARY' in eventDict: return eventDict['FP_VINT_UOPS_EXECUTED.PRIMARY']
       if arch in ['HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'ICL', 'CLX', 'TGL', 'RKL']: return 'A1.40'
       if arch in ['ADL-P', 'EMR', 'MTL-P']: return 'B2.40'
    if event == 'UOPS_PORT_7':
+      if 'FP_ARITH_DISPATCHED.V1' in eventDict: return eventDict['FP_ARITH_DISPATCHED.V1']
+      if 'FP_VINT_UOPS_EXECUTED.STD' in eventDict: return eventDict['FP_VINT_UOPS_EXECUTED.STD']
       if arch in ['HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'CLX']: return 'A1.80'
+   if event == 'UOPS_PORT_8':
+      if 'FP_ARITH_DISPATCHED.V2' in eventDict: return eventDict['FP_ARITH_DISPATCHED.V2']
+   if event == 'UOPS_PORT_9':
+      if 'FP_ARITH_DISPATCHED.V3' in eventDict: return eventDict['FP_ARITH_DISPATCHED.V3']
    if event == 'UOPS_PORT_23':
       if arch in ['ICL', 'TGL', 'RKL']: return 'A1.04'
    if event == 'UOPS_PORT_49':
@@ -342,6 +461,7 @@ def getEventConfig(event):
    if event == 'UOPS_PORT_23A':
       if arch in ['ADL-P', 'EMR', 'MTL-P']: return 'B2.04'
    if event == 'DIV_CYCLES':
+      if 'ARITH.DIV_ACTIVE' in eventDict: return eventDict['ARITH.DIV_ACTIVE']
       if arch in ['NHM', 'WSM', 'SNB', 'IVB', 'HSW', 'BDW', 'SKL', 'SKX', 'KBL', 'CFL', 'CNL', 'CLX']: return '14.01' # undocumented on HSW, but seems to work
       if arch in ['ICL', 'TGL', 'RKL']: return '14.09'
       if arch in ['ZEN+', 'ZEN2', 'ZEN3', 'ZEN4', 'ZEN5']: return '0D3.00'
@@ -368,6 +488,8 @@ def getEventConfig(event):
 
 def configurePFCs(events):
    content = ''
+   if len(eventDict) == 0:
+      readEventConfig(None)
    for event in events:
       cfg = getEventConfig(event)
       if cfg is not None:
@@ -1364,11 +1486,11 @@ def getBasicLatencies(instrNodeList):
 
       if testSetCycles == 2:
          basicLatency['TEST'] = 1
-      elif arch in ['BNL', 'SLM', 'AMT', 'GLM', 'GLP', 'TNT']:
+      elif arch in ['BNL', 'SLM', 'AMT', 'GLM', 'GLP', 'TNT', 'ARL-P', 'LNL-P']:
          # according to the Optimization Manual (June 2021)
          basicLatency['TEST'] = 1
       else:
-         print('Latencies of TEST and SET' + flag[0] + ' could not be determined')
+         print('Latencies of TEST and SET' + flag[0] + ' could not be determined. Expected two cycles and got {testSetCycles}')
          sys.exit()
 
       basicLatency['SET' + flag[0]] = testSetCycles - basicLatency['TEST']
@@ -1405,7 +1527,7 @@ def getBasicLatencies(instrNodeList):
          basicLatency[instr] = int(result['Core cycles'] + .2)
 
    if any(x.findall('[@extension="AVX512EVEX"]') for x in instrNodeList):
-      kmovq_result = runExperiment(instrNodeDict['KMOVQ_VEX (K, K)'], 'KMOVQ K1, K1')
+      kmovq_result = runExperiment(instrNodeDict['KMOVQ (K, K)'], 'KMOVQ K1, K1')
       basicLatency['KMOVQ'] = int(kmovq_result['Core cycles'] + .2)
 
       vpandd_result = runExperiment(instrNodeDict['VPANDD (ZMM, ZMM, ZMM)'], 'VPANDD ZMM0, ZMM0, ZMM0')
@@ -1417,7 +1539,10 @@ def getBasicLatencies(instrNodeList):
          vmovups_uops = int(vmovups_result['UOPS'] + .2)
          basicLatency['VMOVUPS_' + regType + '_' + 'K'] = vmovups_cycles
 
-         if not vmovups_uops == 1:
+         if arch in [ ]:
+            # 2-uop AVX512 implementations
+            print('Allowing VMOVUPS to have {vmovups_uops} when exactly 1 is the requirement')
+         elif not vmovups_uops == 1:
             print('VMOVUPS must have exactly 1 uop')
             sys.exit()
 
@@ -3109,7 +3234,7 @@ def main():
                         'FpuPipeAssignment.Total4', 'FpuPipeAssignment.Total5', 'DIV_CYCLES'])
       else:
          configurePFCs(['UOPS', 'RETIRE_SLOTS', 'UOPS_MITE', 'UOPS_MS', 'UOPS_PORT_0', 'UOPS_PORT_1', 'UOPS_PORT_2', 'UOPS_PORT_3', 'UOPS_PORT_4',
-                        'UOPS_PORT_5', 'UOPS_PORT_6', 'UOPS_PORT_7', 'UOPS_PORT_23', 'UOPS_PORT_49', 'UOPS_PORT_78', 'UOPS_PORT_5B', 'UOPS_PORT_5B>=2',
+                        'UOPS_PORT_5', 'UOPS_PORT_6', 'UOPS_PORT_7', 'UOPS_PORT_8', 'UOPS_PORT_9', 'UOPS_PORT_23', 'UOPS_PORT_49', 'UOPS_PORT_78', 'UOPS_PORT_5B', 'UOPS_PORT_5B>=2',
                         'UOPS_PORT_23A', 'DIV_CYCLES', 'ILD_STALL.LCP', 'INST_DECODED.DEC0', 'UOPS_MITE>=1'])
 
    try:
