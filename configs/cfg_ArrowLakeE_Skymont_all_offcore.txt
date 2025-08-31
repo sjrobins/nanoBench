@@ -1,4 +1,4 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_skymont_core.json (Version: 1.09)
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_skymont_core.json (Version: 1.13)
 # Applies to processors with family-model in {6-C5, 6-C6}
 
 # Counts streaming stores that have any type of response.

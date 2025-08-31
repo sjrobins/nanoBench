@@ -1,0 +1,95 @@
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/CWF/events/clearwaterforest_core.json (Version: 1.00)
+# Applies to processors with family-model in {6-DD}
+
+# Fixed Counter: Counts the number of issue slots that were not consumed by the backend because allocation is stalled due to a mispredicted jump or a machine clear.
+00.05.CTR=36 TOPDOWN_BAD_SPECULATION.ALL
+
+# Fixed Counter: Counts the number of retirement slots not consumed due to front end stalls.
+00.06.CTR=37 TOPDOWN_FE_BOUND.ALL
+
+# Fixed Counter: Counts the number of consumed retirement slots.
+00.07.CTR=38 TOPDOWN_RETIRING.ALL
+
+# Counts the number of page walks completed due to load DTLB misses to any page size.
+08.0E DTLB_LOAD_MISSES.WALK_COMPLETED
+
+# Counts the number of cacheable memory requests that miss in the LLC. Counts on a per core basis.
+2E.41 LONGEST_LAT_CACHE.MISS
+
+# Counts the number of cacheable memory requests that access the LLC. Counts on a per core basis.
+2E.4F LONGEST_LAT_CACHE.REFERENCE
+
+# Counts the number of unhalted core clock cycles. [This event is alias to CPU_CLK_UNHALTED.THREAD_P]
+3C.00 CPU_CLK_UNHALTED.CORE_P
+
+# Counts the number of unhalted core clock cycles. [This event is alias to CPU_CLK_UNHALTED.CORE_P]
+3C.00 CPU_CLK_UNHALTED.THREAD_P
+
+# Counts the number of unhalted reference clock cycles at TSC frequency.
+3C.01 CPU_CLK_UNHALTED.REF_TSC_P
+
+# Counts the number of page walks completed due to store DTLB misses to any page size.
+49.0E DTLB_STORE_MISSES.WALK_COMPLETED
+
+# Counts every time the code stream enters into a new cache line by walking sequential from the previous line or being redirected by a jump and the instruction cache registers bytes are not present. -
+80.02 ICACHE.MISSES
+
+# Counts every time the code stream enters into a new cache line by walking sequential from the previous line or being redirected by a jump.
+80.03 ICACHE.ACCESSES
+
+# Counts the number of page walks completed due to instruction fetch misses to any page size.
+85.0E ITLB_MISSES.WALK_COMPLETED
+
+# Counts the number of retirement slots not consumed due to backend stalls. [This event is alias to TOPDOWN_BE_BOUND.ALL_P]
+A4.02 TOPDOWN_BE_BOUND.ALL
+
+# Counts the number of retirement slots not consumed due to backend stalls. [This event is alias to TOPDOWN_BE_BOUND.ALL]
+A4.02 TOPDOWN_BE_BOUND.ALL_P
+
+# Counts the number of instructions retired.
+C0.00 INST_RETIRED.ANY_P
+
+# Counts the total number of branch instructions retired for all branch types.
+C4.00 BR_INST_RETIRED.ALL_BRANCHES
+
+# Counts the total number of mispredicted branch instructions retired for all branch types.
+C5.00 BR_MISP_RETIRED.ALL_BRANCHES
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x10.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_16
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x100.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_256
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x20.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_32
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x200.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_512
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x4.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_4
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x40.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_64
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x400.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_1024
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x8.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_8
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x80.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_128
+
+# Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
+D0.05.MSR_3F6H=0x800.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_2048
+
+# Counts the number of  stores uops retired same as MEM_UOPS_RETIRED.ALL_STORES
+D0.06 MEM_UOPS_RETIRED.STORE_LATENCY
+
+# Counts the number of load ops retired.
+D0.81 MEM_UOPS_RETIRED.ALL_LOADS
+
+# Counts the number of store ops retired.
+D0.82 MEM_UOPS_RETIRED.ALL_STORES

@@ -1,5 +1,5 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/MTL/events/meteorlake_crestmont_core.json (Version: 1.16)
-# Applies to processors with family-model in {6-AA, 6-AC, 6-B5}
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/SRF/events/sierraforest_core.json (Version: 1.11)
+# Applies to processors with family-model in {6-AF}
 
 # Counts the number of retired loads that are blocked because its address exactly matches an older store whose data is not ready.
 03.01 LD_BLOCKS.DATA_UNKNOWN
@@ -109,9 +109,6 @@
 # Counts the number of unhalted cycles when the core is stalled due to a demand load miss which missed all the local caches. If the core has access to an L3 cache, an LLC miss refers to an L3 cache miss, otherwise it is an L2 cache miss.
 34.78 MEM_BOUND_STALLS_LOAD.LLC_MISS
 
-# Counts the number of cycles the core is stalled due to a demand load which missed in the L2 cache.
-34.7E MEM_BOUND_STALLS_LOAD.L2_MISS
-
 # Counts the number of unhalted cycles when the core is stalled due to an L1 demand load miss.
 34.7F MEM_BOUND_STALLS_LOAD.ALL
 
@@ -126,9 +123,6 @@
 
 # Counts the number of unhalted cycles when the core is stalled due to an ICACHE or ITLB miss which missed all the caches. If the core has access to an L3 cache, an LLC miss refers to an L3 cache miss, otherwise it is an L2 cache miss.
 35.78 MEM_BOUND_STALLS_IFETCH.LLC_MISS
-
-# Counts the number of cycles the core is stalled due to an instruction cache or TLB miss which missed in the L2 cache.
-35.7E MEM_BOUND_STALLS_IFETCH.L2_MISS
 
 # Counts the number of unhalted cycles when the core is stalled due to an instruction cache or TLB miss.
 35.7F MEM_BOUND_STALLS_IFETCH.ALL
@@ -271,9 +265,6 @@
 # Counts the number of first level TLB misses but second level hits due to an instruction fetch that did not start a page walk. Account for all pages sizes. Will result in an ITLB write from STLB.
 85.20 ITLB_MISSES.STLB_HIT
 
-# Counts the number of uops executed on floating point and vector integer store data port.
-B2.01 FP_VINT_UOPS_EXECUTED.STD
-
 # Counts the number of instructions retired
 C0.00 INST_RETIRED.ANY_P
 
@@ -292,9 +283,6 @@ C2.08 UOPS_RETIRED.FPDIV
 # Counts the number of integer divide uops retired.
 C2.10 UOPS_RETIRED.IDIV
 
-# Counts the total number of machine clears for any reason including, but not limited to, memory ordering, memory disambiguation, SMC, and FP assist.
-C3.00 MACHINE_CLEARS.ANY
-
 # Counts the number of machine clears due to program modifying data (self modifying code) within 1K of a recently fetched code page.
 C3.01 MACHINE_CLEARS.SMC
 
@@ -309,9 +297,6 @@ C3.08 MACHINE_CLEARS.DISAMBIGUATION
 
 # Counts the number of machine clears due to a page fault.  Counts both I-Side and D-Side (Loads/Stores) page faults.  A page fault occurs when either the page is not present, or an access violation occurs.
 C3.20 MACHINE_CLEARS.PAGE_FAULT
-
-# Counts the number of machines clears due to memory renaming.
-C3.80 MACHINE_CLEARS.MRN_NUKE
 
 # Counts the total number of branch instructions retired for all branch types.
 C4.00 BR_INST_RETIRED.ALL_BRANCHES
@@ -431,34 +416,34 @@ CD.02.CMSK=1 ARITH.FPDIV_ACTIVE
 CD.03.CMSK=1 ARITH.DIV_ACTIVE
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x10.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_16
+D0.05.MSR_3F6H=0x10.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_16
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x100.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_256
+D0.05.MSR_3F6H=0x100.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_256
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x20.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_32
+D0.05.MSR_3F6H=0x20.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_32
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x200.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_512
+D0.05.MSR_3F6H=0x200.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_512
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x4.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_4
+D0.05.MSR_3F6H=0x4.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_4
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x40.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_64
+D0.05.MSR_3F6H=0x40.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_64
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x400.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_1024
+D0.05.MSR_3F6H=0x400.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_1024
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x8.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_8
+D0.05.MSR_3F6H=0x8.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_8
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x80.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_128
+D0.05.MSR_3F6H=0x80.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_128
 
 # Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.
-D0.05.MSR_3F6H=0x800.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_2048
+D0.05.MSR_3F6H=0x800.CTR=0.TakenAlone MEM_UOPS_RETIRED.LOAD_LATENCY_GT_2048
 
 # Counts the number of  stores uops retired same as MEM_UOPS_RETIRED.ALL_STORES
 D0.06 MEM_UOPS_RETIRED.STORE_LATENCY
@@ -509,7 +494,7 @@ D1.40 MEM_LOAD_UOPS_RETIRED.L1_MISS
 D1.80 MEM_LOAD_UOPS_RETIRED.L2_MISS
 
 # Counts the number of load ops retired that miss the L3 cache and hit in DRAM
-D4.02 MEM_LOAD_UOPS_MISC_RETIRED.LOCAL_DRAM
+D3.01 MEM_LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM
 
 # Counts the number of Last Branch Record (LBR) entries. Requires LBRs to be enabled and configured in IA32_LBR_CTL. [This event is alias to LBR_INSERTS.ANY]
 E4.01 MISC_RETIRED.LBR_INSERTS

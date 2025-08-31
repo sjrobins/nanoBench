@@ -1,11 +1,14 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_lioncove_core.json (Version: 1.13)
-# Applies to processors with family-model in {6-C5, 6-C6}
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/PTL/events/pantherlake_cougarcove_core.json (Version: 1.00)
+# Applies to processors with family-model in {6-CC}
 
 # Count number of times a load is depending on another load that had just write back its data or in previous or  2 cycles back. This event supports in-direct dependency through a single uop.
 02.07 DEPENDENT_LOADS.ANY
 
 # False dependencies in MOB due to partial compare on address.
 03.04 LD_BLOCKS.ADDRESS_ALIAS
+
+# Bank conflicts in DCU due to limited lookup ports.
+03.40 LD_BLOCKS.BANK_CONFLICT
 
 # Loads blocked due to overlapping with a preceding store that cannot be forwarded.
 03.82 LD_BLOCKS.STORE_FORWARD
@@ -214,6 +217,9 @@
 # Cycles when L1D is locked
 42.02 LOCK_CYCLES.CACHE_LOCK_DURATION
 
+# Number of cache-lines required by retired stores whose Data Source is: Memory Side Cache
+44.00 MEM_STORE_RETIRED.MEMSIDE_CACHE
+
 # MEM_STORE_RETIRED.L2_HIT
 44.01 MEM_STORE_RETIRED.L2_HIT
 
@@ -313,7 +319,7 @@
 # Cycles when optimal number of uops was delivered to the back-end when the back-end is not stalled
 9C.01.CMSK=1.INV IDQ_BUBBLES.CYCLES_FE_WAS_OK
 
-# Cycles when no uops are not delivered by the IDQ when backend of the machine is not stalled [This event is alias to IDQ_BUBBLES.CYCLES_0_UOPS_DELIV.CORE]
+# Cycles when no uops are not delivered by the IDQ when backend of the machine is not stalled
 9C.01.CMSK=8 IDQ_BUBBLES.STARVATION_CYCLES
 
 # Cycles when no uops are delivered by the IDQ for 2 or more cycles when backend of the machine is not stalled - normally indicating a Fetch Latency issue
@@ -535,8 +541,8 @@ C3.04 MACHINE_CLEARS.SMC
 # All branch instructions retired.
 C4.00 BR_INST_RETIRED.ALL_BRANCHES
 
-# Taken conditional branch instructions retired.
-C4.01 BR_INST_RETIRED.COND_TAKEN
+# Far branch instructions retired.
+C4.00 BR_INST_RETIRED.FAR_BRANCH
 
 # Taken backward conditional branch instructions retired.
 C4.01 BR_INST_RETIRED.COND_TAKEN_BWD
@@ -544,86 +550,107 @@ C4.01 BR_INST_RETIRED.COND_TAKEN_BWD
 # Taken forward conditional branch instructions retired.
 C4.02 BR_INST_RETIRED.COND_TAKEN_FWD
 
-# Direct and indirect near call instructions retired.
-C4.02 BR_INST_RETIRED.NEAR_CALL
+# Taken conditional branch instructions retired.
+C4.03 BR_INST_RETIRED.COND_TAKEN
+
+# Not taken branch instructions retired.
+C4.04 BR_INST_RETIRED.COND_NTAKEN
+
+# Conditional branch instructions retired.
+C4.07 BR_INST_RETIRED.COND
 
 # Return instructions retired.
 C4.08 BR_INST_RETIRED.NEAR_RETURN
 
-# Not taken branch instructions retired.
-C4.10 BR_INST_RETIRED.COND_NTAKEN
+# Indirect near call instructions retired. [This event is alias to BR_INST_RETIRED.NEAR_IND_CALL]
+C4.10 BR_INST_RETIRED.NEAR_INDIRECT_CALL
 
-# Conditional branch instructions retired.
-C4.11 BR_INST_RETIRED.COND
+# near relative call instructions retired. [This event is alias to BR_INST_RETIRED.NEAR_REL_CALL]
+C4.20 BR_INST_RETIRED.NEAR_DIRECT_CALL
+
+# Direct and indirect near call instructions retired.
+C4.30 BR_INST_RETIRED.NEAR_CALL
+
+# Indirect near jump instructions retired. [This event is alias to BR_INST_RETIRED.NEAR_IND_JMP]
+C4.40 BR_INST_RETIRED.NEAR_INDIRECT_JMP
+
+# Indirect near branch instructions retired (excluding returns) [This event is alias to BR_INST_RETIRED.INDIRECT]
+C4.50 BR_INST_RETIRED.NEAR_INDIRECT
+
+# near relative jump instructions retired. [This event is alias to BR_INST_RETIRED.NEAR_REL_JMP]
+C4.80 BR_INST_RETIRED.NEAR_DIRECT_JMP
+
+# Indirect and Direct Relative near jump instructions retired.
+C4.C0 BR_INST_RETIRED.NEAR_JMP
 
 # Taken branch instructions retired.
-C4.20 BR_INST_RETIRED.NEAR_TAKEN
-
-# Far branch instructions retired.
-C4.40 BR_INST_RETIRED.FAR_BRANCH
-
-# Indirect near branch instructions retired (excluding returns)
-C4.80 BR_INST_RETIRED.INDIRECT
+C4.FB BR_INST_RETIRED.NEAR_TAKEN
 
 # All mispredicted branch instructions retired.
 C5.00 BR_MISP_RETIRED.ALL_BRANCHES
 
-# number of branch instructions retired that were mispredicted and taken forward.
-C5.00 BR_MISP_RETIRED.COND_TAKEN_FWD
-
-# number of branch instructions retired that were mispredicted and taken.
-C5.01 BR_MISP_RETIRED.COND_TAKEN
+# All mispredicted branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.ALL_BRANCHES_COST]
+C5.00 BR_MISP_RETIRED.ALL_BRANCHES_TPEBS
 
 # number of branch instructions retired that were mispredicted and taken backward.
 C5.01 BR_MISP_RETIRED.COND_TAKEN_BWD
 
-# number of branch instructions retired that were mispredicted and taken backward. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.01 BR_MISP_RETIRED.COND_TAKEN_BWD_COST
+# number of branch instructions retired that were mispredicted and taken backward. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.COND_TAKEN_BWD_COST]
+C5.01 BR_MISP_RETIRED.COND_TAKEN_BWD_TPEBS
 
-# number of branch instructions retired that were mispredicted and taken forward. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.02 BR_MISP_RETIRED.COND_TAKEN_FWD_COST
+# number of branch instructions retired that were mispredicted and taken forward.
+C5.02 BR_MISP_RETIRED.COND_TAKEN_FWD
 
-# Mispredicted indirect CALL retired.
-C5.02 BR_MISP_RETIRED.INDIRECT_CALL
+# number of branch instructions retired that were mispredicted and taken forward. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.COND_TAKEN_FWD_COST]
+C5.02 BR_MISP_RETIRED.COND_TAKEN_FWD_TPEBS
 
-# This event counts the number of mispredicted ret instructions retired. Non PEBS
-C5.08 BR_MISP_RETIRED.RET
+# number of branch instructions retired that were mispredicted and taken.
+C5.03 BR_MISP_RETIRED.COND_TAKEN
+
+# Mispredicted taken conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.COND_TAKEN_COST]
+C5.03 BR_MISP_RETIRED.COND_TAKEN_TPEBS
 
 # Mispredicted non-taken conditional branch instructions retired.
-C5.10 BR_MISP_RETIRED.COND_NTAKEN
+C5.04 BR_MISP_RETIRED.COND_NTAKEN
+
+# Mispredicted non-taken conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.COND_NTAKEN_COST]
+C5.04 BR_MISP_RETIRED.COND_NTAKEN_TPEBS
 
 # Mispredicted conditional branch instructions retired.
-C5.11 BR_MISP_RETIRED.COND
+C5.07 BR_MISP_RETIRED.COND
+
+# Mispredicted conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.COND_COST]
+C5.07 BR_MISP_RETIRED.COND_TPEBS
+
+# This event counts the number of mispredicted ret instructions retired. Non PEBS [This event is alias to BR_MISP_RETIRED.RET]
+C5.08 BR_MISP_RETIRED.NEAR_RETURN
+
+# Mispredicted ret instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.RET_COST]
+C5.08 BR_MISP_RETIRED.NEAR_RETURN_TPEBS
+
+# Mispredicted indirect CALL retired. [This event is alias to BR_MISP_RETIRED.INDIRECT_CALL]
+C5.10 BR_MISP_RETIRED.NEAR_INDIRECT_CALL
+
+# Mispredicted indirect CALL retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.INDIRECT_CALL_COST]
+C5.10 BR_MISP_RETIRED.NEAR_INDIRECT_CALL_TPEBS
+
+# Miss-predicted near indirect jump instructions retired. [This event is alias to BR_MISP_RETIRED.INDIRECT_JMP]
+C5.40 BR_MISP_RETIRED.NEAR_INDIRECT_JMP
+
+# Miss-predicted near indirect jump instructions retired. Precise cost. [This event is alias to BR_MISP_RETIRED.INDIRECT_JMP_COST]
+C5.40 BR_MISP_RETIRED.NEAR_INDIRECT_JMP_TPEBS
+
+# Miss-predicted near indirect branch instructions retired (excluding returns) [This event is alias to BR_MISP_RETIRED.INDIRECT]
+C5.50 BR_MISP_RETIRED.NEAR_INDIRECT
+
+# Mispredicted near indirect branch instructions retired (excluding returns). This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.INDIRECT_COST]
+C5.50 BR_MISP_RETIRED.NEAR_INDIRECT_TPEBS
 
 # Number of near branch instructions retired that were mispredicted and taken.
-C5.20 BR_MISP_RETIRED.NEAR_TAKEN
+C5.FB BR_MISP_RETIRED.NEAR_TAKEN
 
-# Mispredicted taken conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.41 BR_MISP_RETIRED.COND_TAKEN_COST
-
-# Mispredicted indirect CALL retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.42 BR_MISP_RETIRED.INDIRECT_CALL_COST
-
-# All mispredicted branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.44 BR_MISP_RETIRED.ALL_BRANCHES_COST
-
-# Mispredicted ret instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.48 BR_MISP_RETIRED.RET_COST
-
-# Mispredicted non-taken conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.50 BR_MISP_RETIRED.COND_NTAKEN_COST
-
-# Mispredicted conditional branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.51 BR_MISP_RETIRED.COND_COST
-
-# Mispredicted taken near branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.60 BR_MISP_RETIRED.NEAR_TAKEN_COST
-
-# Miss-predicted near indirect branch instructions retired (excluding returns)
-C5.80 BR_MISP_RETIRED.INDIRECT
-
-# Mispredicted near indirect branch instructions retired (excluding returns). This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch.
-C5.C0 BR_MISP_RETIRED.INDIRECT_COST
+# Mispredicted taken near branch instructions retired. This precise event may be used to get the misprediction cost via the Retire_Latency field of PEBS. It fires on the instruction that immediately follows the mispredicted branch. [This event is alias to BR_MISP_RETIRED.NEAR_TAKEN_COST]
+C5.FB BR_MISP_RETIRED.NEAR_TAKEN_TPEBS
 
 # Mispredicted Retired ANT branches
 C6.02.TakenAlone FRONTEND_RETIRED.MISP_ANT
@@ -700,10 +727,7 @@ C7.04 FP_ARITH_OPS_RETIRED.128B_PACKED_DOUBLE
 # Number of SSE/AVX computational 128-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB MUL DIV MIN MAX RCP14 RSQRT14 SQRT DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element.
 C7.08 FP_ARITH_OPS_RETIRED.128B_PACKED_SINGLE
 
-# FP_ARITH_INST_RETIRED.VECTOR_128B [This event is alias to FP_ARITH_OPS_RETIRED.VECTOR_128B]
-C7.0C FP_ARITH_INST_RETIRED.VECTOR_128B
-
-# FP_ARITH_OPS_RETIRED.VECTOR_128B [This event is alias to FP_ARITH_INST_RETIRED.VECTOR_128B]
+# FP_ARITH_OPS_RETIRED.VECTOR_128B
 C7.0C FP_ARITH_OPS_RETIRED.VECTOR_128B
 
 # Counts number of SSE/AVX computational 256-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element.
@@ -715,10 +739,7 @@ C7.18 FP_ARITH_OPS_RETIRED.4_FLOPS
 # Counts number of SSE/AVX computational 256-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 8 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT RSQRT RCP DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element.
 C7.20 FP_ARITH_OPS_RETIRED.256B_PACKED_SINGLE
 
-# FP_ARITH_INST_RETIRED.VECTOR_256B [This event is alias to FP_ARITH_OPS_RETIRED.VECTOR_256B]
-C7.30 FP_ARITH_INST_RETIRED.VECTOR_256B
-
-# FP_ARITH_OPS_RETIRED.VECTOR_256B [This event is alias to FP_ARITH_INST_RETIRED.VECTOR_256B]
+# FP_ARITH_OPS_RETIRED.VECTOR_256B
 C7.30 FP_ARITH_OPS_RETIRED.VECTOR_256B
 
 # Number of any Vector retired FP arithmetic instructions
@@ -840,6 +861,9 @@ D2.04 MEM_LOAD_L3_HIT_RETIRED.XSNP_HITM
 
 # Retired load instructions whose data sources were a cross-core Snoop hits and forwards data from an in on-package core cache (induced by NI$)
 D2.10 MEM_LOAD_L3_HIT_RETIRED.XSNP_FWD
+
+# Retired load instructions which data source is memory side cache.
+D3.00 MEM_LOAD_L3_MISS_RETIRED.MEMSIDE_CACHE
 
 # Retired instructions with at least 1 uncacheable load or lock.
 D4.04 MEM_LOAD_MISC_RETIRED.UC

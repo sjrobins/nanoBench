@@ -1,5 +1,5 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_lioncove_core.json (Version: 1.13)
-# Applies to processors with family-model in {6-C5, 6-C6}
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/PTL/events/pantherlake_cougarcove_core.json (Version: 1.00)
+# Applies to processors with family-model in {6-CC}
 
 # Counts demand data reads that have any type of response.
 2A.01.MSR_RSP0=0x10001.TakenAlone OCR.DEMAND_DATA_RD.ANY_RESPONSE
@@ -22,17 +22,17 @@
 # Counts demand read for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that were supplied by the L3 cache where a snoop hit in another cores caches, data forwarding is required as the data is modified.
 2A.01.MSR_RSP0=0x40001E00002.TakenAlone OCR.DEMAND_RFO.L3_HIT.SNOOP_HITM
 
-# Counts writebacks of modified cachelines that hit in the L3 or were snooped from another core's caches.
+# Counts writebacks of modified cachelines that were supplied by the L3 cache.
 2A.01.MSR_RSP0=0x7E001E00008.TakenAlone OCR.COREWB_M.L3_HIT
 
-# Counts writebacks of non-modified cachelines that hit in the L3 or were snooped from another core's caches.
+# Counts writebacks of non-modified cachelines that were supplied by the L3 cache.
 2A.01.MSR_RSP0=0x7E001E01000.TakenAlone OCR.COREWB_NONM.L3_HIT
 
-# Counts all data read, code read, RFO and ITOM requests including demands and prefetches to the core caches (L1 or L2) that hit in the L3 or were snooped from another core's caches.
+# Counts all data read, code read, RFO and ITOM requests including demands and prefetches to the core caches (L1 or L2) that were supplied by the L3 cache.
 2A.01.MSR_RSP0=0x7E001E04477.TakenAlone OCR.READS_TO_CORE.L3_HIT
 
 # Counts demand data reads that were not supplied by the L3 cache.
-2A.01.MSR_RSP0=0xFE7F8000001.TakenAlone OCR.DEMAND_DATA_RD.L3_MISS
+2A.01.MSR_RSP0=0x9E7FA000001.TakenAlone OCR.DEMAND_DATA_RD.L3_MISS
 
 # Counts demand read for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that were not supplied by the L3 cache.
-2A.01.MSR_RSP0=0xFE7F8000002.TakenAlone OCR.DEMAND_RFO.L3_MISS
+2A.01.MSR_RSP0=0x9E7FA000002.TakenAlone OCR.DEMAND_RFO.L3_MISS

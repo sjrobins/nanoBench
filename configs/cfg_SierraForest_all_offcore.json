@@ -1,0 +1,32 @@
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/SRF/events/sierraforest_core.json (Version: 1.11)
+# Applies to processors with family-model in {6-AF}
+
+# Counts demand data reads that have any type of response.
+B7.01.MSR_RSP0=0x10001.TakenAlone OCR.DEMAND_DATA_RD.ANY_RESPONSE
+
+# Counts demand reads for ownership (RFO) and software prefetches for exclusive ownership (PREFETCHW) that have any type of response.
+B7.01.MSR_RSP0=0x10002.TakenAlone OCR.DEMAND_RFO.ANY_RESPONSE
+
+# Counts demand data reads that were supplied by the L3 cache where a snoop was sent, the snoop hit, and modified data was forwarded.
+B7.01.MSR_RSP0=0x10003C0001.TakenAlone OCR.DEMAND_DATA_RD.L3_HIT.SNOOP_HITM
+
+# Counts demand reads for ownership (RFO) and software prefetches for exclusive ownership (PREFETCHW) that were supplied by the L3 cache where a snoop was sent, the snoop hit, and modified data was forwarded.
+B7.01.MSR_RSP0=0x10003C0002.TakenAlone OCR.DEMAND_RFO.L3_HIT.SNOOP_HITM
+
+# Counts streaming stores that have any type of response.
+B7.01.MSR_RSP0=0x10800.TakenAlone OCR.STREAMING_WR.ANY_RESPONSE
+
+# Counts demand data reads that were supplied by DRAM attached to this socket.
+B7.01.MSR_RSP0=0x184000001.TakenAlone OCR.DEMAND_DATA_RD.LOCAL_DRAM
+
+# Counts demand data reads that were not supplied by the L3 cache.
+B7.01.MSR_RSP0=0x3FBFC00001.TakenAlone OCR.DEMAND_DATA_RD.L3_MISS
+
+# Counts demand reads for ownership (RFO) and software prefetches for exclusive ownership (PREFETCHW) that were not supplied by the L3 cache.
+B7.01.MSR_RSP0=0x3FBFC00002.TakenAlone OCR.DEMAND_RFO.L3_MISS
+
+# Counts demand data reads that were supplied by DRAM attached to another socket.
+B7.01.MSR_RSP0=0x730000001.TakenAlone OCR.DEMAND_DATA_RD.REMOTE_DRAM
+
+# Counts demand data reads that were supplied by the L3 cache where a snoop was sent, the snoop hit, and non-modified data was forwarded.
+B7.01.MSR_RSP0=0x8003C0001.TakenAlone OCR.DEMAND_DATA_RD.L3_HIT.SNOOP_HIT_WITH_FWD

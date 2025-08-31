@@ -1,11 +1,5 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_skymont_core.json (Version: 1.09)
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/ARL/events/arrowlake_skymont_core.json (Version: 1.13)
 # Applies to processors with family-model in {6-C5, 6-C6}
-
-# Fixed Counter: Counts the number of retirement slots not consumed due to front end stalls.
-00.06.CTR=37 TOPDOWN_FE_BOUND.ALL
-
-# Fixed Counter: Counts the number of consumed retirement slots.
-00.07.CTR=38 TOPDOWN_RETIRING.ALL
 
 # Counts the number of occurrences a retired load gets blocked because its address exactly matches an older store whose data is not ready (a.k.a. unknown).  unready_fwd
 03.01 LD_BLOCKS.DATA_UNKNOWN

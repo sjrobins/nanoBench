@@ -1,4 +1,4 @@
-# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/MTL/events/meteorlake_redwoodcove_core.json (Version: 1.14)
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/MTL/events/meteorlake_redwoodcove_core.json (Version: 1.16)
 # Applies to processors with family-model in {6-AA, 6-AC, 6-B5}
 
 # False dependencies in MOB due to partial compare on address.

@@ -1,0 +1,17 @@
+# Based on https://raw.githubusercontent.com/intel/perfmon/refs/heads/main/PTL/events/pantherlake_darkmont_core.json (Version: 1.00)
+# Applies to processors with family-model in {6-CC}
+
+# Counts demand data reads that have any type of response.
+B7.01.MSR_RSP0=0x10001.TakenAlone OCR.DEMAND_DATA_RD.ANY_RESPONSE
+
+# Counts demand read for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that have any type of response.
+B7.01.MSR_RSP0=0x10002.TakenAlone OCR.DEMAND_RFO.ANY_RESPONSE
+
+# Counts demand data reads that were not supplied by the L3 cache.
+B7.01.MSR_RSP0=0x13FBFC00001.TakenAlone OCR.DEMAND_DATA_RD.L3_MISS
+
+# Counts demand read for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that were not supplied by the L3 cache.
+B7.01.MSR_RSP0=0x13FBFC00002.TakenAlone OCR.DEMAND_RFO.L3_MISS
+
+# Counts demand data reads that were supplied by DRAM.
+B7.01.MSR_RSP0=0x7BC000001.TakenAlone OCR.DEMAND_DATA_RD.DRAM
