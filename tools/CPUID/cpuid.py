@@ -257,12 +257,23 @@ def micro_arch(cpu):
       return 'TNT'
    if (vi.displ_family, vi.displ_model) in [(0x06, 0x97), (0x06, 0x9A)]:
       return 'ADL-' + ('P' if (vi.core_type == 0x40) else 'E')
-   if (vi.displ_family, vi.displ_model) in [(0x06, 0xAA), (0x06, 0xAB), (0x06, 0xAC)]:
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xAA), (0x06, 0xB5), (0x06, 0xAC)]:
       return 'MTL-' + ('P' if (vi.core_type == 0x40) else 'E')
    if (vi.displ_family, vi.displ_model) in [(0x06, 0xB5), (0x06, 0xC5), (0x06, 0xC6)]:
       return 'ARL-' + ('P' if (vi.core_type == 0x40) else 'E')
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xBC), (0x06, 0xBD)]:
+      return 'LNL-' + ('P' if (vi.core_type == 0x40) else 'E')
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xCC)]:
+      return 'PTL-' + ('P' if (vi.core_type == 0x40) else 'E')
    if (vi.displ_family, vi.displ_model) in [(0x06, 0xCF)]:
       return 'EMR'
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xAD), (0x06, 0xAE)]:
+      return 'GNR'
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xAF)]:
+      return 'SRF'
+   if (vi.displ_family, vi.displ_model) in [(0x06, 0xDD)]:
+      return 'CWF'
+
 
    # https://en.wikichip.org/wiki/amd/cpuid
    if (vi.displ_family, vi.displ_model) in [(0x17, 0x01), (0x17, 0x11)]:
